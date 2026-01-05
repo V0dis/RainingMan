@@ -19,8 +19,12 @@ public class PoolCubes : MonoBehaviour
             CreateCube();
 
         Cube cube = _poolCubes.Pop();
-        cube.gameObject.SetActive(true);
         return cube;
+    }
+    
+    public void Return(Cube cube)
+    {
+       _poolCubes.Push(cube);
     }
     
     private void CreatePool()
@@ -32,18 +36,9 @@ public class PoolCubes : MonoBehaviour
     private void CreateCube()
     {
         Cube instance = Instantiate(_cube);
-        instance.gameObject.SetActive(false);
-
-        var cubeLifeCycle = instance.GetComponent<CubeLifeCycle>();
         
-        if (cubeLifeCycle != null)
-            cubeLifeCycle.isDeactivated += (cube) => Give(cube);
+        instance.gameObject.SetActive(false);
         
         _poolCubes.Push(instance);
-    }
-
-    private void Give(Cube cube)
-    {
-        _poolCubes.Push(cube);
     }
 }

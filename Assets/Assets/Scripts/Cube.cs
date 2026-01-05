@@ -1,15 +1,16 @@
+using System;
 using UnityEngine;
 
 public class Cube : MonoBehaviour
 {
     [SerializeField] private Color _defaultColor = Color.blue;
-    
-    private void OnEnable()
+
+    private void Awake()
     {
-        ResetState();
+        SetDefaultValue();
     }
 
-    public void ResetState()
+    public void SetDefaultValue()
     {
         if (GetComponent<Renderer>() != null)
             GetComponent<Renderer>().material.color = _defaultColor;

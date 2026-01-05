@@ -1,6 +1,6 @@
-using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class CubeLifeCycle : MonoBehaviour
@@ -10,7 +10,7 @@ public class CubeLifeCycle : MonoBehaviour
     [SerializeField] private float _minReturnTime = 2;
     [SerializeField] private float _maxReturnTime = 5;
     
-    public event Action<Cube> isDeactivated;
+    public UnityEvent<Cube> isReadyToDeactivate = new();
 
     private Coroutine _returnTimer;
     private Coroutine _fullTimer;
@@ -41,8 +41,7 @@ public class CubeLifeCycle : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         
-        gameObject.SetActive(false);
-        isDeactivated?.Invoke(GetComponent<Cube>());
+        isReadyToDeactivate?.Invoke(GetComponent<Cube>());
         
         _returnTimer = null;
     }

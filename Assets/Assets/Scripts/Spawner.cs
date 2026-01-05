@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CubeSpawner : MonoBehaviour
 {
@@ -27,11 +28,46 @@ public class CubeSpawner : MonoBehaviour
         while (enabled)
         {
             Cube cube = _pool.GetCube();
+            
+            cube.gameObject.SetActive(true);
+            
+            SubscribeToCube(cube);
+            
             cube.transform.position = SelectRandomPlace();
             cube.transform.rotation = Quaternion.identity;
             
             yield return wait;
         }
+    }
+
+    private void SubscribeToCube(Cube cube)
+    {
+        var lifeCycle = cube.GetComponent<CubeLifeCycle>();
+        
+        if (lifeCycle != null)
+            lifeCycle.isReadyToDeactivate.AddListener(ReturnCube);
+    }
+
+    private void UnsubscribeToCube(Cube cube)
+    {
+        var lifeCycle = cube.GetComponent<CubeLifeCycle>();
+        
+        if (lifeCycle != null)
+            lifeCycle.isReadyToDeactivate.RemoveListener(ReturnCube);
+    }
+
+    private void ReturnCube(Cube cube)
+    {
+        if (!cube.gameObject.activeSelf) 
+            return;
+        
+        cube.SetDefaultValue();
+        
+        UnsubscribeToCube(cube);
+        
+        cube.gameObject.SetActive(false);
+        
+        _pool.Return(cube);
     }
 
     private Vector3 SelectRandomPlace()

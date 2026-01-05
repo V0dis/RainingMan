@@ -860,7 +860,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Spawner
   _pool: {fileID: 1739118943}
   _radiusSpawn: 5
-  _interval: 0.02
+  _interval: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
