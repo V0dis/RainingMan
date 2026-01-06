@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
+using System;
 using Random = UnityEngine.Random;
 
 public class CubeLifeCycle : MonoBehaviour
@@ -10,16 +10,15 @@ public class CubeLifeCycle : MonoBehaviour
     [SerializeField] private float _minReturnTime = 2;
     [SerializeField] private float _maxReturnTime = 5;
     
-    public UnityEvent<Cube> isReadyToDeactivate = new();
-
     private Coroutine _returnTimer;
-    private Coroutine _fullTimer;
+    
+    public event Action<Cube> IsReadyToDeactivate;
     
     private void OnEnable()
     {
         _collisionDetector.Hit += DeactivateCube;
 
-        _fullTimer = StartCoroutine(DelayedReturn(_allTime));
+        StartCoroutine(DelayedReturn(_allTime));
     }
 
     private void OnDisable()
@@ -41,7 +40,7 @@ public class CubeLifeCycle : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         
-        isReadyToDeactivate?.Invoke(GetComponent<Cube>());
+        IsReadyToDeactivate?.Invoke(GetComponent<Cube>());
         
         _returnTimer = null;
     }

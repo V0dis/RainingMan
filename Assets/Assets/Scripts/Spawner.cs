@@ -14,12 +14,6 @@ public class CubeSpawner : MonoBehaviour
     {
         _spawnRoutine = StartCoroutine(SpawnLoop());
     }
-    
-    private void OnDisable()
-    {
-        if (_spawnRoutine != null)
-            StopCoroutine(_spawnRoutine);
-    }
 
     private IEnumerator SpawnLoop()
     {
@@ -42,18 +36,14 @@ public class CubeSpawner : MonoBehaviour
 
     private void SubscribeToCube(Cube cube)
     {
-        var lifeCycle = cube.GetComponent<CubeLifeCycle>();
-        
-        if (lifeCycle != null)
-            lifeCycle.isReadyToDeactivate.AddListener(ReturnCube);
+        if (cube.TryGetComponent(out CubeLifeCycle lifeCycle))
+            lifeCycle.IsReadyToDeactivate += ReturnCube;
     }
 
     private void UnsubscribeToCube(Cube cube)
     {
-        var lifeCycle = cube.GetComponent<CubeLifeCycle>();
-        
-        if (lifeCycle != null)
-            lifeCycle.isReadyToDeactivate.RemoveListener(ReturnCube);
+        if (cube.TryGetComponent(out CubeLifeCycle lifeCycle))
+            lifeCycle.IsReadyToDeactivate += ReturnCube;
     }
 
     private void ReturnCube(Cube cube)
@@ -62,9 +52,7 @@ public class CubeSpawner : MonoBehaviour
             return;
         
         cube.SetDefaultValue();
-        
         UnsubscribeToCube(cube);
-        
         cube.gameObject.SetActive(false);
         
         _pool.Return(cube);

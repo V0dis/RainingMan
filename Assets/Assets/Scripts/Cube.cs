@@ -1,27 +1,25 @@
-using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Cube : MonoBehaviour
 {
     [SerializeField] private Color _defaultColor = Color.blue;
 
+    private Rigidbody _rigidbody;
+    
     private void Awake()
     {
+        _rigidbody = GetComponent<Rigidbody>();
+        
         SetDefaultValue();
     }
 
     public void SetDefaultValue()
     {
-        if (GetComponent<Renderer>() != null)
-            GetComponent<Renderer>().material.color = _defaultColor;
-    
-        var rigidbody = GetComponent<Rigidbody>();
+        GetComponent<Renderer>().material.color = _defaultColor;
         
-        if (rigidbody)
-        {
-            rigidbody.linearVelocity = Vector3.zero;
-            rigidbody.angularVelocity = Vector3.zero;
-            rigidbody.Sleep();
-        }
+        _rigidbody.linearVelocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
+        _rigidbody.Sleep();
     }
 }
