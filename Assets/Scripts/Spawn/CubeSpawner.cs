@@ -1,13 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CubeSpawner : SpawnerGeneric<Cube>
 {
     [SerializeField] private float _interval = 2f;
     [SerializeField] private float _radiusSpawn = 5f;
-    [SerializeField] private BombSpawner _bombSpawner;
     
-    Coroutine _spawnRoutine;
+    private Coroutine _spawnRoutine;
+    
+    public event Action<Cube> IsReturning;
     
     private void Start()
     {
@@ -16,7 +19,7 @@ public class CubeSpawner : SpawnerGeneric<Cube>
 
     protected override void OnReturning(Cube cube)
     {
-        _bombSpawner.SpawnBomb(cube);
+        IsReturning?.Invoke(cube);
     }
 
     private IEnumerator SpawnLoopCubes()
@@ -25,24 +28,21 @@ public class CubeSpawner : SpawnerGeneric<Cube>
         
         while (enabled)
         {
-            if (PoolEntity.Get().TryGetComponent(out Cube cube))
-            {
-                cube.transform.rotation = Quaternion.identity;
-                cube.transform.position = SelectRandomPlace();
-
-                ConfigureEntity(ref cube);
-
-                yield return wait;
-            }
+            Cube cube = PoolEntity.Get();
+            
+            cube.transform.rotation = Quaternion.identity;
+            cube.transform.position = SelectRandomPlace();
+            ConfigureEntity(ref cube);
+            
+            yield return wait;
         }
     }
     
     private Vector3 SelectRandomPlace()
     {
         return new Vector3(
-            transform.position.x + (Random.value - 0.5f) * 2 * _radiusSpawn,
+            transform.position.x + Random.Range(-1.0f, 1.0f) * _radiusSpawn,
             transform.position.y,
-            transform.position.z + (Random.value - 0.5f) * 2 * _radiusSpawn);
+            transform.position.z + Random.Range(-1.0f, 1.0f) * _radiusSpawn);
     }
 }
-

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SpawnerGeneric<T> : MonoBehaviour where T : Entity
 {
-    [SerializeField] protected PoolEntity PoolEntity;
+    [SerializeField] protected PoolEntity<T> PoolEntity;
     
     protected void ConfigureEntity(ref T entity)
     {
@@ -39,7 +39,7 @@ public class SpawnerGeneric<T> : MonoBehaviour where T : Entity
             Unsubscribe(typeEntety);
             typeEntety.gameObject.SetActive(false);
             
-            PoolEntity.Return(typeEntety);
+            PoolEntity.ReturnToPool(typeEntety);
         }
     }
 

@@ -1,44 +1,39 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoolEntity : MonoBehaviour
+public abstract class PoolEntity<T> : PoolBase where T : Entity
 {
-    private Entity _entityPrefab;
-    private Stack<Entity> _poolEntity = new Stack<Entity>();
+    [SerializeField] private T _entityPrefab;
+        
+    private Stack<T> _poolEntity = new Stack<T>();
     private int _poolSize = 10;
     
-    public event Action CountChanged;
-    
-    public int CountActive { get; private set; }
-    public int CreatedCount { get; private set; }
-    public int SpawnedCount { get; private set; }
-    
-    protected void Initialize(Entity prefab)
+    protected void Initialize(T prefab)
     {
         _entityPrefab = prefab;
         CreatePool();
     }
 
-    public Entity Get()
+    public T Get()
     {
         if (_poolEntity.Count == 0)
             CreateEntity();
         
-        Entity entity = _poolEntity.Pop();
+        T entity = _poolEntity.Pop();
         
         CountActive++;
         SpawnedCount++;
-        CountChanged?.Invoke();
+        InvokeCountChanged();
         
         return entity;
     }
     
-    public void Return(Entity entity)
+    public void ReturnToPool(T entity)
     {
        _poolEntity.Push(entity);
        
        CountActive--;
+       InvokeCountChanged();
     }
     
     private void CreatePool()
@@ -49,14 +44,13 @@ public class PoolEntity : MonoBehaviour
 
     private void CreateEntity()
     {
-        Entity instance = Instantiate(_entityPrefab);
+        T instance = Instantiate(_entityPrefab);
         
         instance.gameObject.SetActive(false);
         
         _poolEntity.Push(instance);
         
         CreatedCount++;
-        
-        CountChanged?.Invoke();
+        InvokeCountChanged();
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class UICount : MonoBehaviour 
 {
-    [SerializeReference] private PoolEntity _poolEntity;
+    [SerializeReference] private PoolBase _poolEntity;
     [SerializeField] private TextMeshProUGUI _text;
 
     private void OnEnable()
@@ -11,6 +11,11 @@ public class UICount : MonoBehaviour
         _poolEntity.CountChanged += UpdateCount;
     }
 
+    private void Start()
+    {
+        UpdateCount();
+    } 
+    
     private void OnDisable()
     {
         _poolEntity.CountChanged -= UpdateCount;

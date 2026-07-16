@@ -18,7 +18,5 @@ public class BombExplosion : MonoBehaviour
             
             hit.attachedRigidbody.AddExplosionForce(_explosionForce, explosionCenter, _explosionRadius);
         }
-        
-        Debug.Log("Explosion!");
     }
 }

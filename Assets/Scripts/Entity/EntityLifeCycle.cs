@@ -46,7 +46,8 @@ public class EntityLifeCycle : MonoBehaviour
     {
         _returnTimer = null;
         
-        IsReadyToDeactivate?.Invoke(GetComponent<Entity>());
+        if (TryGetComponent(out Entity entity))
+            IsReadyToDeactivate?.Invoke(entity);
     }
 
     protected virtual void IsInitialized() { }
